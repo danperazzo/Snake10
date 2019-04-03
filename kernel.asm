@@ -8,6 +8,10 @@ sHead times 2 dd 60
 sTail times 2 dd 60
 tam dw 1
 
+state times 2 dd 0
+
+
+
 white equ 15
 
 black equ 0
@@ -428,11 +432,14 @@ initiate:
 	mov word [sTail+0],60
 	mov word [sTail+4],60
 
-	mov cx,[sHead+0]
-	mov dx,[sHead+4]
+
+
+
 
 	movement:
 
+	mov cx,[sHead+0]
+	mov dx,[sHead+4]
 
 	mov al,green 
 
@@ -447,6 +454,10 @@ initiate:
     int 16h
 
 
+
+
+
+
 	.nextS:
 
 		cmp al,115
@@ -459,10 +470,9 @@ initiate:
 		mov al,black
 		call drawPers
 
-		mov cx,[sHead+0]
-		mov dx,[sHead+4]
-		mov al,green
-		add dx,5
+		
+
+
 		add word [sHead+4], 5
 		add word [sTail+4], 5
 
@@ -475,7 +485,6 @@ initiate:
 		cmp al,119
 		jne .nextD
 
-		mov al,green
 
 		mov cx,[sTail+0]
 		mov dx,[sTail+4]
@@ -483,7 +492,6 @@ initiate:
 		call drawPers
 
 		mov al,green
-		add dx,-5
 		add word [sHead+4], -5
 		add word [sTail+4], -5
 
@@ -493,7 +501,7 @@ initiate:
 		cmp al,100
 		jne .nextA
 
-		mov al,green
+
 
 		mov cx,[sTail+0]
 		mov dx,[sTail+4]
@@ -501,7 +509,6 @@ initiate:
 		call drawPers
 
 		mov al,green
-		add cx,5
 		add word [sHead+0], 5
 		add word [sTail+0], 5
 
@@ -511,7 +518,7 @@ initiate:
 		cmp al,97
 		jne .fim
 
-		mov al,green
+
 
 		mov cx,[sTail+0]
 		mov dx,[sTail+4]
@@ -519,7 +526,6 @@ initiate:
 		call drawPers
 
 		mov al,green
-		add cx,-5
 		add word [sHead+0], -5
 		add word [sTail+0], -5
 
@@ -530,44 +536,46 @@ initiate:
 		je start
 
 
-	cmp cx,5
+	cmp word[sHead+0],5
 	jge .NtOutofbounds1
 
-	add cx,5
+
 	add word [sHead+0], 5
 	add word [sTail+0], 5
 
 
 	.NtOutofbounds2:
 
-	cmp dx,30
+	cmp word[sHead+4],30
 	jge .NtOutofbounds3
 
-	add dx,5
+
 	add word [sHead+4], 5
 	add word [sTail+4], 5
 
 	.NtOutofbounds1:
 
-	cmp cx,305
+	cmp word[sHead+0],305
 	jle .NtOutofbounds2
 
-	sub cx,5
+
 	sub word [sHead+0], 5
 	sub word [sTail+0], 5
 
 	.NtOutofbounds3:
 
-	cmp dx,185
+	cmp word[sHead+4],185
 	jle .NtOutofbounds4
 
-	sub dx,5
+
 	sub word [sHead+4], 5
 	sub word [sTail+4], 5
 
 	.NtOutofbounds4:
 
 	end_pressed:
+
+
 
 	
 
