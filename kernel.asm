@@ -642,6 +642,8 @@ ret
 
 initiate:
 
+	mov byte [state], 0 
+
 	mov al,black
 	call LimpaArea
 
