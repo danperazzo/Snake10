@@ -4,7 +4,7 @@ jmp 0x0000:start
 
 titulo db 'Snake 10', 0
 score db 'score: ',0
-pontosPrint times 4 db '0', 0
+pontosPrint times 3 db '0', 0
 
 sHead times 2 dd 60
 sTail times 2 dd 60
