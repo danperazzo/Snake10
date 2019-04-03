@@ -1,5 +1,5 @@
 # Snake10
-*Projeto bootloader infraestrutura de software - jogo snake em assembly x86*
+*Project of a bootloader for the discipline of software infrastructure at UFPE - Snake game in assembly x86*
 
 
 To build this code you need to have NASM and QEMU installed
