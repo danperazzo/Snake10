@@ -1,30 +1,46 @@
 org 0x7e00
 jmp 0x0000:start
 
+data:
+	titulo db 'Snake 10', 0
+	score db 'score: ',0
+	pontosPrint times 3 db '0', 0
 
-titulo db 'Snake 10', 0
-score db 'score: ',0
-pontosPrint times 3 db '0', 0
+	sHead times 2 dd 60
+	sTail times 2 dd 60
+	sFood times 2 dd 0
+	tam times 1 dd 0
 
-sHead times 2 dd 60
-sTail times 2 dd 60
-sFood times 2 dd 0
-tam times 1 dd 0
+	state times 2 db 0
 
-state times 2 db 0
+	;y - 30 até 185
+	;x -  5 até 310
+	posix times 8 dd 300, 40, 100, 175, 50, 65, 275, 150
+	posiy times 8 dd 170, 100, 50, 80, 65, 130, 45, 150
+	
+	;strings para o menu 
+	startG db 'Start', 0
+	instrucions db 'Instrucions', 0
+	credits db 'Credits', 0
+	instru0 db 'Press:', 0
+	instru1 db 'W -> Move Up', 0
+	instru2 db 'S -> Move Down', 0
+	instru3 db 'D -> Move Right', 0
+	instru4 db 'A -> Move Left', 0
+	instru5 db 'You die if you touch the borders.', 0
+	cred0 db 'Natalia Soares', 0
+	cred1 db 'Daniel Perazzo', 0
+	cred2 db 'Matheus Albuquerque', 0
+	;-------------------------------
+	win db 'You Win!', 0
+	lose db 'You Lose!', 0
 
-;y - 30 até 185
-;x -  5 até 310
-posix times 8 dd 300, 40, 100, 175, 50, 65, 275, 150
-posiy times 8 dd 170, 100, 50, 80, 65, 130, 45, 150
-
-
-white equ 15
-black equ 0
-yellow equ 14
-green equ 10
-blue equ 1
-red equ 12
+	white equ 15
+	black equ 0
+	yellow equ 14
+	green equ 10
+	blue equ 1
+	red equ 12
 
 delay:
 	mov bp, 50
@@ -388,37 +404,243 @@ printaTela:
 
 
 menu:
-	
 	mov al, black
 	call LimpaArea
 
-	mov  dl, 12
-	mov  dh, 9
-	mov  bh, 0
-	mov  bl, green
-	
+	mov  dl, 12 ;x
+	mov  dh, 9 ;y
+	mov  bh, 0 
+	mov  bl, green ;cor
 	call prepareStringBox
-	
 	mov si, titulo
 	call printString
+
+	.Play:
+		;mov al, black
+		;call LimpaArea
+		mov  dl, 12 ;x
+		mov  dh, 9 ;y
+		mov  bh, 0 
+		mov  bl, green ;cor
+		call prepareStringBox
+		mov si, titulo
+		call printString
+
+		mov dl, 12
+		mov dh, 15
+		mov bh, 0
+		mov bl, red
+		call prepareStringBox
+		mov si, startG
+		call printString
+		
+		mov dl, 12
+		mov dh, 18
+		mov bh, 0
+		mov bl, white
+		call prepareStringBox
+		mov si, instrucions
+		call printString
+
+		mov dl, 12
+		mov dh, 21
+		mov bh, 0
+		mov bl, white
+		call prepareStringBox
+		mov si, credits
+		call printString
+		call read_char
+
+		cmp al,115
+		je .Instruc
+		
+		cmp al, 13
+		je .endmenu
+
+		jmp .Play
+
+	.Instruc:
+		;mov al, black
+		;call LimpaArea
+
+		mov  dl, 12 ;x
+		mov  dh, 9 ;y
+		mov  bh, 0 
+		mov  bl, green ;cor
+		call prepareStringBox	
+		mov si, titulo
+		call printString
+
+
+		mov dl, 12
+		mov dh, 15
+		mov bh, 0
+		mov bl, white
+		call prepareStringBox
+		mov si, startG
+		call printString
+		
+		mov dl, 12
+		mov dh, 18
+		mov bh, 0
+		mov bl, red
+		call prepareStringBox
+		mov si, instrucions
+		call printString
+
+		mov dl, 12
+		mov dh, 21
+		mov bh, 0
+		mov bl, white
+		call prepareStringBox
+		mov si, credits
+		call printString	
+
+		call read_char
+		cmp al, 119 ;w==19
+		je .Play
+		cmp al, 115 ; s== 115
+		je .Cred
+		cmp al, 13
+		je .printInstruct
+		
+		jmp .Instruc
+
+		.printInstruct:
+			mov al, black
+			call LimpaArea
+
+			mov dl, 12
+			mov dh, 5
+			mov bh, 0
+			mov bl, green
+			call prepareStringBox
+			mov si, instrucions
+			call printString
+
+			mov dh, 8
+			mov bl, white
+			call prepareStringBox
+			mov si, instru0
+			call printString
+
+			mov dh, 11
+			call prepareStringBox
+			mov si, instru1
+			call printString
+
+			mov dh, 14
+			call prepareStringBox
+			mov si, instru2
+			call printString
+
+			mov dh, 17
+			call prepareStringBox
+			mov si, instru3
+			call printString
+
+			mov dh, 20
+			call prepareStringBox
+			mov si, instru4
+			call printString
+
+			mov dl, 5
+			mov dh, 23
+			call prepareStringBox
+			mov si, instru5
+			call printString
+
+			call read_char
+
+			mov al, black
+			call LimpaArea
+
+			jmp .Instruc
+
+	.Cred:
+	;	mov al, black
+	;	call LimpaArea
+
+		mov  dl, 12 ;x
+		mov  dh, 9 ;y
+		mov  bh, 0 
+		mov  bl, green ;cor
+		call prepareStringBox
+		mov si, titulo
+		call printString
+
+		mov dl, 12
+		mov dh, 15
+		mov bh, 0
+		mov bl, white
+		call prepareStringBox
+		mov si, startG
+		call printString
 	
-	
-	call read_char
-	
-	
+		mov dl, 12
+		mov dh, 18
+		mov bh, 0
+		mov bl, white
+		call prepareStringBox
+		mov si, instrucions
+		call printString
+
+		mov dl, 12
+		mov dh, 21
+		mov bh, 0
+		mov bl, red
+		call prepareStringBox
+		mov si, credits
+		call printString	
+
+		call read_char
+
+		cmp al, 119 ;w==19
+		je .Instruc
+		cmp al, 13
+		je .printCred
+
+		jmp .Cred
+		.printCred:
+			mov al, black
+			call LimpaArea
+
+			mov dl, 12
+			mov dh, 5
+			mov bh, 0
+			mov bl, green
+			call prepareStringBox
+			mov si, credits
+			call printString
+			
+			mov dh, 8
+			mov bl, white
+			call prepareStringBox
+			mov si, cred0
+			call printString
+
+			mov dh, 11
+			call prepareStringBox
+			mov si, cred1
+			call printString
+
+			mov dh, 14
+			call prepareStringBox
+			mov si, cred2
+			call printString
+
+			call read_char
+
+			mov al, black
+			call LimpaArea
+
+			jmp .Cred
+	.endmenu:
+
 ret
 
 
-
-
-
-
-
-
-
 initiate:
-
-	
 
 	mov al,black
 	call LimpaArea
@@ -443,10 +665,10 @@ initiate:
 
 	call drawComida
 
-	mov word [sHead+0],60
-	mov word [sHead+4],60
-	mov word [sTail+0],60
-	mov word [sTail+4],60
+	mov word [sHead+0],200
+	mov word [sHead+4],160
+	mov word [sTail+0],200
+	mov word [sTail+4],160
 
 
 	movement:
@@ -473,7 +695,6 @@ initiate:
 
 		end_pressed:
 
-
 		call delay
 
 
@@ -495,8 +716,8 @@ initiate:
 			add word [sHead+4], 5
 			add word [sTail+4], 5
 
-			push cx
-			push dx
+			;push cx
+			;push dx
 
 	
 			cmp dx, [sFood+4]
@@ -523,8 +744,8 @@ initiate:
 			add word [sHead+4], -5
 			add word [sTail+4], -5
 
-			push cx
-			push dx
+			;push cx
+			;push dx
 
 	
 			cmp dx, [sFood+4]
@@ -548,8 +769,8 @@ initiate:
 			add word [sHead+0], 5
 			add word [sTail+0], 5
 			
-			push cx
-			push dx
+			;push cx
+			;push dx
 
 			cmp cx, [sFood+0]
 			jle .comparaX
@@ -569,8 +790,8 @@ initiate:
 			add word [sHead+0], -5
 			add word [sTail+0], -5
 
-			push cx
-			push dx
+			;push cx
+			;push dx
 
 			cmp cx, [sFood+0]
 			jle .comparaX
@@ -611,7 +832,7 @@ initiate:
 		.comeu:
 			add byte [pontosPrint],1
 			cmp byte [pontosPrint], '9'
-			je ganhou
+			je .printWin
 
 			mov cx,[sFood+0]
 			mov dx, [sFood+4]
@@ -651,63 +872,82 @@ initiate:
 
 
 		.NtOutofbounds1:
-			cmp word[sHead+0],5
+			cmp word[sHead+0], 5
 			jge .NtOutofbounds2
 
-			add word [sHead+0], 5
-			add word [sTail+0], 5
+			;add word [sHead+0], 5
+			;add word [sTail+0], 5
+			jmp .printLose
 
 		.NtOutofbounds2:
 			cmp word[sHead+0],305
 			jle .NtOutofbounds3
 
 
-			sub word [sHead+0], 5
-			sub word [sTail+0], 5
-
+			;sub word [sHead+0], 5
+			;sub word [sTail+0], 5
+			jmp .printLose
 
 		.NtOutofbounds3:
 			cmp word[sHead+4],30
 			jge .NtOutofbounds4
 
-			add word [sHead+4], 5
-			add word [sTail+4], 5
-		
+			;add word [sHead+4], 5
+			;add word [sTail+4], 5
+			jmp .printLose
 
 		.NtOutofbounds4:
 			cmp word[sHead+4],185
 			jle movement
 
-			sub word [sHead+4], 5
-			sub word [sTail+4], 5
+			;sub word [sHead+4], 5
+			;sub word [sTail+4], 5
+			jmp .printLose
+			;jmp movement
 
-			jmp movement
+		.printLose:
+			mov  dl, 15 ;x
+			mov  dh, 9 ;y
+			mov  bh, 0 
+			mov  bl, red ;cor
+			call prepareStringBox
+			mov si, lose
+			call printString
+			call read_char
+			mov byte [pontosPrint], '0'
+			jmp .endgame
+		
+		.printWin:
+			mov  dl, 33
+			mov  dh, 1
+			mov  bh, 0
+			mov  bl, white
+			call prepareStringBox
+			mov si, pontosPrint
+			call printString
+
+			mov  dl, 15 ;x
+			mov  dh, 9 ;y
+			mov  bh, 0 
+			mov  bl, green ;cor
+			call prepareStringBox
+			mov si, win
+			call printString
+			call read_char
+			mov byte [pontosPrint], '0'
+			jmp .endgame
+	.endgame:
+ret
 
 start:
 	
 	call initVideo
 
 	ini:
-
-
 	call menu
 
 	gameitself:
 
 	call initiate
 
-ganhou:
-	call menu
-
-
-
-
-
-
-	
-	
-	
-	
-
-
-
+	jmp ini
