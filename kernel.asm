@@ -1,37 +1,30 @@
 org 0x7e00
 jmp 0x0000:start
 
+
 titulo db 'Snake 10', 0
 score db 'score: ',0
+pontosPrint times 4 db '0', 0
 
 sHead times 2 dd 60
 sTail times 2 dd 60
-tam dw 1
+sFood times 2 dd 0
+tam times 1 dd 0
 
 state times 2 db 0
 
-
-
+;y - 30 até 185
+;x -  5 até 310
+posix times 8 dd 300, 40, 100, 175, 50, 65, 275, 150
+posiy times 8 dd 170, 100, 50, 80, 65, 130, 45, 150
 
 
 white equ 15
-
 black equ 0
-
 yellow equ 14
-
 green equ 10
-
 blue equ 1
-
 red equ 12
-
-
-
-leftarrow equ $1E
-rightarrow equ $20
-uparrow equ $11
-downarrow equ $1F
 
 delay:
 	mov bp, 50
@@ -432,8 +425,19 @@ initiate:
 
 	call printaTela
 
-	mov dx,150
-	mov cx,20
+	mov  dl, 33
+	mov  dh, 1
+	mov  bh, 0
+	mov  bl, white
+	call prepareStringBox
+	mov si, pontosPrint
+	call printString
+
+	mov word [sFood+0],20
+	mov word [sFood+4],150
+
+	mov cx,[sFood+0]
+	mov dx,[sFood+4]
 
 	mov al,red
 
@@ -445,176 +449,239 @@ initiate:
 	mov word [sTail+4],60
 
 
-
-
-
 	movement:
+		mov cx,[sHead+0]
+		mov dx,[sHead+4]
 
-	call delay
+		mov al,green 
 
-	mov cx,[sHead+0]
-	mov dx,[sHead+4]
-
-	mov al,green 
-
-	call drawPers
-
-	mov al,[state]
-
-
-	mov ah, 01h ; checks if a key is pressed
-    int 16h
-    jz end_pressed ; zero = no pressed
-
-    mov ah, 00h ; get the keystroke
-    int 16h
-
-	mov byte[state],al
-
-	end_pressed:
-
-
-	call delay
-
-
-	.nextS:
-
-		cmp al,115
-		jne .nextW
-
-		mov al,green
-
-		mov cx,[sTail+0]
-		mov dx,[sTail+4]
-		mov al,black
 		call drawPers
 
-		
+		call delay
+
+		mov al,[state]
 
 
-		add word [sHead+4], 5
-		add word [sTail+4], 5
+		mov ah, 01h ; checks if a key is pressed
+		int 16h
+		jz end_pressed ; zero = no pressed
 
-		;mov word [sTail+0],[sHead+0]
-		;push dx
-		;mov word [sHead+4], dx
+		mov ah, 00h ; get the keystroke
+		int 16h
 
-	.nextW:
+		mov byte[state],al
 
-		cmp al,119
-		jne .nextD
-
-
-		mov cx,[sTail+0]
-		mov dx,[sTail+4]
-		mov al,black
-		call drawPers
-
-		mov al,green
-		add word [sHead+4], -5
-		add word [sTail+4], -5
+		end_pressed:
 
 
-	.nextD:
-
-		cmp al,100
-		jne .nextA
+		call delay
 
 
+		.nextS:
 
-		mov cx,[sTail+0]
-		mov dx,[sTail+4]
-		mov al,black
-		call drawPers
+			cmp al,115
+			jne .nextW
 
-		mov al,green
-		add word [sHead+0], 5
-		add word [sTail+0], 5
+			mov al,green
 
+			mov cx,[sTail+0]
+			mov dx,[sTail+4]
+			mov al,black
+			call drawPers
 
-	.nextA:
-
-		cmp al,97
-		jne .fim
+			
 
 
+			add word [sHead+4], 5
+			add word [sTail+4], 5
 
-		mov cx,[sTail+0]
-		mov dx,[sTail+4]
-		mov al,black
-		call drawPers
-
-		mov al,green
-		add word [sHead+0], -5
-		add word [sTail+0], -5
-
-
-	.fim:
-
-		cmp al,113
-		je start
-
-
-	cmp word[sHead+0],5
-	jge .NtOutofbounds1
-
-
-	add word [sHead+0], 5
-	add word [sTail+0], 5
-
-
-	.NtOutofbounds2:
-
-	cmp word[sHead+4],30
-	jge .NtOutofbounds3
-
-
-	add word [sHead+4], 5
-	add word [sTail+4], 5
-
-	.NtOutofbounds1:
-
-	cmp word[sHead+0],305
-	jle .NtOutofbounds2
-
-
-	sub word [sHead+0], 5
-	sub word [sTail+0], 5
-
-	.NtOutofbounds3:
-
-	cmp word[sHead+4],185
-	jle .NtOutofbounds4
-
-
-	sub word [sHead+4], 5
-	sub word [sTail+4], 5
-
-	.NtOutofbounds4:
-
-
-
-
+			push cx
+			push dx
 
 	
+			cmp dx, [sFood+4]
+			jle .comparaY
+			jne .fim
+
+
+			;mov word [sTail+0],[sHead+0]
+			;push dx
+			;mov word [sHead+4], dx
+
+		.nextW:
+
+			cmp al,119
+			jne .nextD
+
+
+			mov cx,[sTail+0]
+			mov dx,[sTail+4]
+			mov al,black
+			call drawPers
+
+			mov al,green
+			add word [sHead+4], -5
+			add word [sTail+4], -5
+
+			push cx
+			push dx
+
+	
+			cmp dx, [sFood+4]
+			jle .comparaY
+			jne .fim
+
+
+		.nextD:
+
+			cmp al,100
+			jne .nextA
 
 
 
+			mov cx,[sTail+0]
+			mov dx,[sTail+4]
+			mov al,black
+			call drawPers
+
+			mov al,green
+			add word [sHead+0], 5
+			add word [sTail+0], 5
+			
+			push cx
+			push dx
+
+			cmp cx, [sFood+0]
+			jle .comparaX
+			jne .fim
+
+		.nextA:
+
+			cmp al,97
+			jne .fim
+
+			mov cx,[sTail+0]
+			mov dx,[sTail+4]
+			mov al,black
+			call drawPers
+
+			mov al,green
+			add word [sHead+0], -5
+			add word [sTail+0], -5
+
+			push cx
+			push dx
+
+			cmp cx, [sFood+0]
+			jle .comparaX
+			jne .fim
+		
+		.comparaX:
+			add cx, 9
+			cmp cx, [sFood+0]
+			jge .comparaY1
+			jle .fim
+		.comparaY1:
+			cmp dx, [sFood+4]
+			jle .comparaY2
+			jge .fim
+		.comparaY2:
+			add dx, 9
+			cmp dx, [sFood+4]
+			jge .comeu
+			jle .fim
 
 
+		.comparaY:
+			add dx, 9
+			cmp dx, [sFood+4]
+			jge .comparaX1
+			jle .fim	
+		.comparaX1:
+			cmp cx, [sFood+0]
+			jle .comparaX2
+			jge .fim
+		.comparaX2:
+			add cx, 9
+			cmp cx, [sFood+0]
+			jge .comeu
+			jle .fim
 
 
+		.comeu:
+			add byte [pontosPrint],1
+			cmp byte [pontosPrint], '9'
+			je ganhou
+
+			mov cx,[sFood+0]
+			mov dx, [sFood+4]
+			mov al,black
+			call drawComida
+
+			mov bx, [tam]
+			mov cx, [posix+bx] 
+			mov dx, [posiy+bx] 
+			add word [tam], 4
+			mov word [sFood+0], cx
+			mov word [sFood+4], dx
+	
+			mov al,red
+			call drawComida
+
+			mov  dl, 33
+			mov  dh, 1
+			mov  bh, 0
+			mov  bl, black
+			call prepareStringBox
+			call printString
+
+			mov  dl, 33
+			mov  dh, 1
+			mov  bh, 0
+			mov  bl, white
+			call prepareStringBox
+			mov si, pontosPrint
+			call printString
 
 
+		.fim:
+
+			cmp al,113
+			je start
 
 
+		.NtOutofbounds1:
+			cmp word[sHead+0],5
+			jge .NtOutofbounds2
 
-	jmp movement
+			add word [sHead+0], 5
+			add word [sTail+0], 5
+
+		.NtOutofbounds2:
+			cmp word[sHead+0],305
+			jle .NtOutofbounds3
 
 
+			sub word [sHead+0], 5
+			sub word [sTail+0], 5
 
 
+		.NtOutofbounds3:
+			cmp word[sHead+4],30
+			jge .NtOutofbounds4
 
+			add word [sHead+4], 5
+			add word [sTail+4], 5
+		
+
+		.NtOutofbounds4:
+			cmp word[sHead+4],185
+			jle movement
+
+			sub word [sHead+4], 5
+			sub word [sTail+4], 5
+
+			jmp movement
 
 start:
 	
@@ -629,6 +696,9 @@ start:
 
 	call initiate
 
+ganhou:
+	call menu
+
 
 
 
@@ -638,7 +708,6 @@ start:
 	
 	
 	
-
 
 
 
