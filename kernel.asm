@@ -8,7 +8,9 @@ sHead times 2 dd 60
 sTail times 2 dd 60
 tam dw 1
 
-state times 2 dd 0
+state times 2 db 0
+
+
 
 
 
@@ -31,7 +33,17 @@ rightarrow equ $20
 uparrow equ $11
 downarrow equ $1F
 
+delay:
+	mov bp, 50
+	mov dx, 70
+	delay2:
+		dec bp
+		nop
+		jnz delay2
+	dec dx
+	jnz delay2
 
+ret
 
 
 initVideo:
@@ -438,12 +450,16 @@ initiate:
 
 	movement:
 
+	call delay
+
 	mov cx,[sHead+0]
 	mov dx,[sHead+4]
 
 	mov al,green 
 
 	call drawPers
+
+	mov al,[state]
 
 
 	mov ah, 01h ; checks if a key is pressed
@@ -453,9 +469,12 @@ initiate:
     mov ah, 00h ; get the keystroke
     int 16h
 
+	mov byte[state],al
+
+	end_pressed:
 
 
-
+	call delay
 
 
 	.nextS:
@@ -573,7 +592,7 @@ initiate:
 
 	.NtOutofbounds4:
 
-	end_pressed:
+
 
 
 
