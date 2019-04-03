@@ -438,9 +438,17 @@ initiate:
 
 	call drawPers
 
+
+	mov ah, 01h ; checks if a key is pressed
+    int 16h
+    jz end_pressed ; zero = no pressed
+
+    mov ah, 00h ; get the keystroke
+    int 16h
+
+
 	.nextS:
 
-		call read_char 
 		cmp al,115
 		jne .nextW
 
@@ -558,6 +566,8 @@ initiate:
 	sub word [sTail+4], 5
 
 	.NtOutofbounds4:
+
+	end_pressed:
 
 	
 
