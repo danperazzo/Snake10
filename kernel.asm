@@ -945,11 +945,9 @@ start:
 	
 	call initVideo
 
-	ini:
-	call menu
+	.ini:
+		call menu
 
-	gameitself:
-
-	call initiate
-
-	jmp ini
+	.gameitself:
+		call initiate
+		jmp .ini

@@ -1,10 +1,12 @@
 org 0x500
 jmp 0x0000:start
 
-line1 db 'A Arcadio Buendia Production: ', 0
-line2 db 'Made by: drp,nss2 and mvca', 0
-line3 db 'Powered by: A Large Sum of Potatoes ', 0
-final db '          ', 0
+
+line1 db 'Loading structures for the kernel...',0
+line2 db 'Setting up protected mode...', 0
+line3 db 'Loading kernel in memory...', 0
+line4 db 'Running kernel!', 0
+final db ' ', 0
 
 start:
     mov bl, 15
@@ -26,6 +28,18 @@ start:
         
         mov cx,3
         mov si,line3
+        call printLine
+        
+        call newLine
+
+        mov cx,3
+        mov si,line4
+        call printLine
+        
+        call newLine
+        
+        mov cx,3
+        mov si,final
         call printLine
         
         call newLine
@@ -60,6 +74,18 @@ clear:
     int 10h
 ret
 
+
+delay: 
+	mov bp, dx
+	back:
+	dec bp
+	nop
+	jnz back
+	dec dx
+	cmp dx,0    
+	jnz back
+ret
+
 printLine:
     
     lodsb
@@ -69,30 +95,15 @@ printLine:
     mov ah, 0xe
     int 10h
 
-    mov dx, 200
-    call timing
+    mov dx, 400
+    call delay
 
     jmp printLine
-
-
-
-
-
 
 
 return:
 ret
 
-timing:
-    mov bp, dx
-    uselessFor:
-    dec bp
-    nop
-    jnz uselessFor
-    dec dx
-    cmp dx, 0
-    jnz uselessFor
-ret
 
 newLine:
     mov al, 10
