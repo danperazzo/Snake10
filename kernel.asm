@@ -20,7 +20,7 @@ data:
 	
 	;strings para o menu 
 	startG db 'Start', 0
-	instrucions db 'Instrucions', 0
+	instrucions db 'Instructions', 0
 	credits db 'Credits', 0
 	instru0 db 'Press:', 0
 	instru1 db 'W -> Move Up', 0
